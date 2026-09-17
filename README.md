@@ -4,7 +4,7 @@ Two independent pieces:
 
 1. **`onnx_export_and_trt/`** — exports `facebook/sam3` (HuggingFace `transformers`) to ONNX, then
    builds the TensorRT FP16 engines actually used at inference time.
-2. **`ros_node/`** — the ROS node and supporting Python that run those engines against OAK camera
+2. **`ros_node/`** — the ROS node and supporting Python that run those engines against camera
    footage for PPE (helmet) compliance detection.
 
 No data (images, rosbags, cached tensors, model weights) is included — only code. Everything here
@@ -72,7 +72,7 @@ Dependencies: `torch`, `transformers` (with SAM-3 support), `tensorrt`, `pillow`
 
 | File | Role |
 |------|------|
-| `mask_extraction_node.py` | Live ROS node: subscribes to an OAK camera image topic, runs the TensorRT SAM-3 pipeline (`Sam3TrtBatchedPipeline` — one encoder call + one batched decoder call per frame), applies the helmet-worn rule, publishes an annotated image + JSON results, and reports achieved FPS against the incoming topic's rate. Also defines the shared pipeline class, prompts, and verdict logic that `batch_process_bags.py` reuses. |
+| `mask_extraction_node.py` | Live ROS node: subscribes to a camera image topic, runs the TensorRT SAM-3 pipeline (`Sam3TrtBatchedPipeline` — one encoder call + one batched decoder call per frame), applies the helmet-worn rule, publishes an annotated image + JSON results, and reports achieved FPS against the incoming topic's rate. Also defines the shared pipeline class, prompts, and verdict logic that `batch_process_bags.py` reuses. |
 | `body_segmentation.py` | Per-person geometry: matches each SAM-3 "head and upper body" detection (used directly as the person anchor — no separate "person" prompt) to its "head" and "upper garment" detections, with a small evidence-based reflection-area floor as the only real filter. Also has a standalone `main()` demo against a local image folder (not part of the live pipeline). |
 | `batch_process_bags.py` | Offline batch tool: for each input `.bag`, writes a new bag with all original topics preserved plus annotated image / binary mask / JSON-results topics, and compiles a per-bag MP4. Reuses the exact same pipeline and rules as the live node. |
 | `visualize_rgb_and_mask.py` | Standalone QA tool: renders a side-by-side (RGB \| binary mask) MP4 from an already-produced `batch_process_bags.py` output bag, for visually checking mask quality. |
