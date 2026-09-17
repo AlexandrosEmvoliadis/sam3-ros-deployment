@@ -22,7 +22,7 @@ What this actually ran on, checked directly against the working install rather t
   *building* (not inference) is the peak memory moment — `WORKSPACE_GB = 4` in the build scripts: raise
   it if a build fails for lack of workspace, lower it if you're on a smaller card.
 - **Python**: a **separate 3.10 virtualenv**, isolated from ROS's own system Python (this project
-  used `pyenv`, name `gdino310`, but any 3.9+ env manager works the same way). This is the crux of
+  used `pyenv` but any 3.9+ env manager works the same way). This is the crux of
   the setup: you need a modern Python for `torch`/`transformers`/`tensorrt`, but ROS Noetic's own
   `rospy`/`rosbag` are only installed against the system Python.
 - **Bridging ROS into that virtualenv**: `source /opt/ros/noetic/setup.bash` first (sets `PYTHONPATH`
